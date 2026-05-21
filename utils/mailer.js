@@ -1,8 +1,10 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 const dotenv = require('dotenv');
 const db = require('../database/db');
 
 dotenv.config();
+
+const resendClient = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 /**
  * Generates an ultra-premium, cyber-futuristic HTML template for student admission.
@@ -212,7 +214,7 @@ function getAdmissionEmailHTML(studentName, courseName, username, password, logi
 }
 
 /**
- * Sends an email using SMTP if configured, otherwise logs it into the PostgreSQL sent_emails table.
+ * Sends an email using Resend if configured, otherwise logs it into the PostgreSQL sent_emails table.
  * @param {object} params
  * @param {string} params.to 
  * @param {string} params.subject 
@@ -220,17 +222,13 @@ function getAdmissionEmailHTML(studentName, courseName, username, password, logi
  * @param {string} params.courseName 
  * @param {string} params.username 
  * @param {string} params.password 
- * @returns {Promise<{success: boolean, mode: string, messageId?: string}>}
+ * @returns {Promise<{success: boolean, mode: string, messageId?: string, error?: string}>}
  */
 async function sendAdmissionEmail({ to, subject, studentName, courseName, username, password }) {
-  const loginUrl = `http://localhost:${process.env.PORT || 3000}`;
+  const loginUrl = `https://actividad-daniel.onrender.com`; // Used live render URL as base
   const htmlContent = getAdmissionEmailHTML(studentName, courseName, username, password, loginUrl);
   
-  const smtpUser = process.env.SMTP_USER;
-  const smtpPass = process.env.SMTP_PASS;
-  
-  // If SMTP variables are missing, trigger the Virtual Mailbox Fallback
-  if (!smtpUser || !smtpPass) {
+  if (!resendClient) {
     console.log('\n--- [VIRTUAL MAIL BOX TRIGGERED] ---');
     console.log(`Para: ${to}`);
     console.log(`Asunto: ${subject}`);
@@ -238,16 +236,9 @@ async function sendAdmissionEmail({ to, subject, studentName, courseName, userna
     console.log(`Contraseña Generada: ${password}`);
     console.log('------------------------------------\n');
     
-    // Save to sent_emails PostgreSQL table
     try {
       await db.insert('sent_emails', {
-        para: to,
-        asunto: subject,
-        estudiante: studentName,
-        curso: courseName,
-        usuario: username,
-        contrasena: password,
-        html: htmlContent
+        para: to, asunto: subject, estudiante: studentName, curso: courseName, usuario: username, contrasena: password, html: htmlContent
       });
     } catch (dbErr) {
       console.error('Error logging virtual mail to database:', dbErr);
@@ -256,45 +247,40 @@ async function sendAdmissionEmail({ to, subject, studentName, courseName, userna
     return { success: true, mode: 'virtual' };
   }
 
-  // Otherwise, send a real email using SMTP
   try {
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.SMTP_PORT || '587', 10),
-      secure: process.env.SMTP_SECURE === 'true',
-      auth: {
-        user: smtpUser,
-        pass: smtpPass
-      }
+    const { data, error } = await resendClient.emails.send({
+      from: `Infinity Tech University <${process.env.SENDER_EMAIL || 'onboarding@resend.dev'}>`,
+      to: [to],
+      subject: subject,
+      html: htmlContent
     });
 
-    const mailOptions = {
-      from: `"${process.env.SENDER_NAME || 'Infinity Tech University'}" <${process.env.SENDER_EMAIL || smtpUser}>`,
-      to,
-      subject,
-      html: htmlContent
-    };
+    if (error) {
+      console.error('Resend API Error:', error);
+      throw new Error(error.message);
+    }
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log(`Correo SMTP enviado exitosamente: ${info.messageId}`);
-    return { success: true, mode: 'smtp', messageId: info.messageId };
-  } catch (error) {
-    console.error('Fallo en el envío SMTP, guardando copia en buzón virtual:', error);
+    console.log(`Correo Resend enviado exitosamente. ID: ${data.id}`);
     
-    // Fallback if SMTP fails during runtime - save to PostgreSQL
+    // Guardar también en la base de datos para el registro en el panel de administrador
     try {
       await db.insert('sent_emails', {
-        para: to,
-        asunto: `${subject} (SMTP FAILED FALLBACK)`,
-        estudiante: studentName,
-        curso: courseName,
-        usuario: username,
-        contrasena: password,
-        html: htmlContent,
-        error: error.message
+        para: to, asunto: subject, estudiante: studentName, curso: courseName, usuario: username, contrasena: password, html: htmlContent
       });
     } catch (dbErr) {
-      console.error('Error logging virtual fallback mail:', dbErr);
+      // ignore
+    }
+
+    return { success: true, mode: 'resend', messageId: data.id };
+  } catch (error) {
+    console.error('Fallo en el envío Resend, guardando copia en buzón virtual:', error);
+    
+    try {
+      await db.insert('sent_emails', {
+        para: to, asunto: `${subject} (RESEND FAILED FALLBACK)`, estudiante: studentName, curso: courseName, usuario: username, contrasena: password, html: htmlContent, error: error.message
+      });
+    } catch (dbErr) {
+      // ignore
     }
     
     return { success: true, mode: 'fallback_virtual', error: error.message };
