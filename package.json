@@ -1,0 +1,27 @@
+{
+  "name": "infinity-tech-university",
+  "version": "1.0.0",
+  "description": "Premium Technology University Educational Platform focusing on AI and Data Science",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "education",
+    "ai",
+    "data-science",
+    "express",
+    "javascript"
+  ],
+  "author": "Antigravity",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.13",
+    "pg": "^8.21.0"
+  }
+}

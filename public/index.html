@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Infinity Tech University | Liderando la Educación en IA y Ciencia de Datos</title>
+  
+  <!-- FontAwesome Icons for UI -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ==========================================
+       FUTURISTIC PRELOADER
+       ========================================== -->
+  <div class="futurism-loader-container" id="preloader">
+    <div class="cyber-spinner"></div>
+    <div class="loader-brand">INFINITY TECH</div>
+    <p style="font-family:'Rajdhani'; color:var(--secondary); font-weight:700; letter-spacing:2px; font-size:13px; text-transform:uppercase; margin-top:10px;">Iniciando Motores de IA...</p>
+  </div>
+
+  <!-- ==========================================
+       PARTICLES & AMBIENT LAYER
+       ========================================== -->
+  <canvas id="particles-canvas"></canvas>
+  <div class="ambient-glow-1"></div>
+  <div class="ambient-glow-2"></div>
+
+  <!-- ==========================================
+       NAVIGATION HEADER
+       ========================================== -->
+  <header id="main-header">
+    <div class="container nav-container">
+      <a href="#" class="logo" onclick="navigateTo('home')">
+        <div class="logo-icon"><i class="fa-solid fa-microchip"></i></div>
+        <span>Infinity Tech</span>
+      </a>
+      
+      <nav>
+        <ul>
+          <li><a href="#" class="nav-link active" data-nav="home" onclick="navigateTo('home')">Inicio</a></li>
+          <li><a href="#courses-section" class="nav-link" data-nav="courses">Cursos</a></li>
+          <li><a href="#" class="nav-link" data-nav="portal" onclick="openLoginModal()">Campus Virtual</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <!-- Theme Toggle -->
+        <button class="theme-toggle" id="theme-toggle" title="Alternar Modo Claro/Oscuro">
+          <span>☀️</span>
+        </button>
+        <!-- Auth Buttons -->
+        <button class="btn btn-secondary" onclick="openLoginModal()">Iniciar Sesión</button>
+        <button class="btn btn-primary" onclick="openRegisterModal()">Postularse</button>
+        
+        <!-- Mobile menu toggle -->
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       SECTION 1: LANDING PAGE (HOME)
+       ========================================== -->
+  <main id="home-section">
+    <!-- Hero Banner -->
+    <section class="container hero">
+      <div class="hero-content">
+        <h2>Liderazgo Académico Global</h2>
+        <h1>Construye el futuro con tecnología e Inteligencia Artificial</h1>
+        <p>Especialízate en los algoritmos predictivos y heurísticos que lideran la revolución informática. Infinity Tech te ofrece formación premium guiada por doctores expertos y acceso a clústeres GPU.</p>
+        <div class="hero-buttons">
+          <button class="btn btn-primary" onclick="openRegisterModal()">Postularse Ahora</button>
+          <a href="#courses-section" class="btn btn-secondary">Explorar Cursos</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-sphere-container">
+          <div class="hero-sphere"></div>
+          <div class="hero-ring ring-1"></div>
+          <div class="hero-ring ring-2"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Animated Counters -->
+    <section class="container" style="padding-top:0;">
+      <div class="stats-grid">
+        <div class="stat-card glass-panel">
+          <div class="stat-number" id="count-students">1,200+</div>
+          <div class="stat-label">Estudiantes Activos</div>
+        </div>
+        <div class="stat-card glass-panel">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Becas Corporativas</div>
+        </div>
+        <div class="stat-card glass-panel">
+          <div class="stat-number" id="count-docs">45+</div>
+          <div class="stat-label">Docentes Especializados</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bienvenida Institucional -->
+    <section class="container" style="display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;">
+      <div>
+        <h2 class="section-title" style="text-align:left; margin-bottom:20px;">Educación de Élite Sin Barreras</h2>
+        <p style="color:var(--text-muted); margin-bottom:20px; font-size:16px;">
+          En Infinity Tech University redefinimos la experiencia universitaria internacional. Formamos a la próxima generación de ingenieros e investigadores en Inteligencia Artificial y Ciencia de Datos utilizando metodologías ágiles basadas en proyectos reales.
+        </p>
+        <p style="color:var(--text-muted); font-size:16px;">
+          Todos nuestros programas cuentan con patrocinio total de empresas globales de computación en la nube. Esto significa que nuestros estudiantes ingresan becados al 100%, enfocándose únicamente en absorber conocimientos y resolver problemas complejos de optimización.
+        </p>
+      </div>
+      <div class="glass-panel" style="padding:40px; border-left: 5px solid var(--secondary);">
+        <h3 style="font-family:'Rajdhani'; font-size:24px; color:var(--secondary); margin-bottom:15px;">DECLARACIÓN DE VISIÓN</h3>
+        <p style="font-style:italic; font-size:15px; color:var(--text-muted); line-height:1.7;">
+          "Convertirnos en el epicentro académico y científico de América Latina para el año 2030, capacitando profesionales de alto rendimiento capaces de diseñar redes neuronales autónomas y optimizar sistemas bio-inspirados que transformen las industrias productivas globales."
+        </p>
+      </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="container">
+      <h2 class="section-title">Beneficios de Estudiar Aquí</h2>
+      <p class="section-subtitle">Por qué Infinity Tech es la mejor opción de desarrollo</p>
+      
+      <div class="benefits-grid">
+        <div class="benefit-card glass-panel">
+          <div class="benefit-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+          <h3>Plan Curricular de Vanguardia</h3>
+          <p>Materias enfocadas estrictamente en algoritmos activos. Sin materias de relleno, directo a la práctica e investigación aplicada.</p>
+        </div>
+        <div class="benefit-card glass-panel">
+          <div class="benefit-icon"><i class="fa-solid fa-network-wired"></i></div>
+          <h3>Ecosistema GPU Cloud</h3>
+          <p>Acceso ilimitado a laboratorios virtuales equipados con aceleradoras gráficas para tus entrenamientos y simulaciones en Python.</p>
+        </div>
+        <div class="benefit-card glass-panel">
+          <div class="benefit-icon"><i class="fa-solid fa-handshake"></i></div>
+          <h3>Alianzas Globales</h3>
+          <p>Conexión directa con empresas tecnológicas líderes para pasantías, mentorías y reclutamiento inmediato al egresar.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dynamic Courses Listing -->
+    <section class="container" id="courses-section">
+      <h2 class="section-title">Programas Académicos Disponibles</h2>
+      <p class="section-subtitle">Postúlate al curso que definirá tu trayectoria profesional</p>
+      
+      <!-- Populated dynamically by app.js -->
+      <div class="courses-grid" id="courses-grid-list"></div>
+    </section>
+
+    <!-- Technological Gallery -->
+    <section class="container">
+      <h2 class="section-title">Galería Tecnológica</h2>
+      <p class="section-subtitle">Explora nuestras instalaciones e investigación</p>
+      
+      <div class="gallery-grid">
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=80" alt="Hardware de IA">
+          <div class="gallery-overlay">
+            <h4>Supercomputador Turing</h4>
+            <p>Laboratorio de Procesamiento Paralelo</p>
+          </div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=400&q=80" alt="Código Genético">
+          <div class="gallery-overlay">
+            <h4>Simulación de Poblaciones</h4>
+            <p>Optimización Heurística en Python</p>
+          </div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=400&q=80" alt="Robótica e Inteligencia Artificial">
+          <div class="gallery-overlay">
+            <h4>Brazos Robóticos Inteligentes</h4>
+            <p>Algoritmos de Navegación Evolutiva</p>
+          </div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=80" alt="Análisis de Datos">
+          <div class="gallery-overlay">
+            <h4>Visualización de Modelos</h4>
+            <p>Data Science e Inteligencia de Negocios</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="container">
+      <h2 class="section-title">Testimonios de Estudiantes</h2>
+      <p class="section-subtitle">Qué opinan nuestros académicos egresados</p>
+      
+      <div class="testimonials-grid">
+        <div class="testimonial-card glass-panel">
+          <div class="student-meta">
+            <div class="student-avatar">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Estudiante AI">
+            </div>
+            <div class="student-name">
+              <h4>María González</h4>
+              <span>Egresada - Algoritmos Genéticos</span>
+            </div>
+          </div>
+          <p class="testimonial-text">
+            "Ingresar a Infinity Tech cambió las reglas de mi carrera. El curso de Algoritmos Genéticos me enseñó a resolver problemas de ruteo vehicular que en mi antigua universidad consideraban imposibles. La plataforma estudiantil y el acceso a GPU son simplemente extraordinarios."
+          </p>
+        </div>
+        <div class="testimonial-card glass-panel">
+          <div class="student-meta">
+            <div class="student-avatar">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Estudiante Regresión">
+            </div>
+            <div class="student-name">
+              <h4>Carlos Rodríguez</h4>
+              <span>Estudiante Activo - Regresión Lineal</span>
+            </div>
+          </div>
+          <p class="testimonial-text">
+            "La metodología de enseñanza 100% práctica de Infinity Tech te obliga a codificar desde el primer día. Aprendí Regresión Lineal no como una teoría matemática aburrida, sino como una herramienta real en Python para predecir cotizaciones financieras y optimizar portafolios."
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- News & Events -->
+    <section class="container">
+      <h2 class="section-title">Noticias y Eventos</h2>
+      <p class="section-subtitle">Mantente al día con el acontecer de Infinity Tech</p>
+      
+      <div class="news-grid">
+        <div class="news-card glass-panel">
+          <div class="news-img">
+            <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=400&q=80" alt="Simposio">
+          </div>
+          <div class="news-content">
+            <span class="news-date">28 de Mayo, 2026</span>
+            <h3>Simposio Internacional de Inteligencia Artificial</h3>
+            <p>Nuestros investigadores presentarán avances sobre optimización adaptativa en robótica móvil.</p>
+          </div>
+        </div>
+        <div class="news-card glass-panel">
+          <div class="news-img">
+            <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=400&q=80" alt="Hackathon">
+          </div>
+          <div class="news-content">
+            <span class="news-date">15 de Junio, 2026</span>
+            <h3>Hackathon de Machine Learning Aplicado</h3>
+            <p>Competencia inter-universitaria enfocada en modelos lineales predictivos de salud pública.</p>
+          </div>
+        </div>
+        <div class="news-card glass-panel">
+          <div class="news-img">
+            <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=400&q=80" alt="Graduacion">
+          </div>
+          <div class="news-content">
+            <span class="news-date">02 de Julio, 2026</span>
+            <h3>Acto Académico de Promoción 2026-I</h3>
+            <p>Graduación de nuestra primera cohorte de analistas científicos en Machine Learning Avanzado.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="logo">
+            <div class="logo-icon"><i class="fa-solid fa-microchip"></i></div>
+            <span>Infinity Tech</span>
+          </a>
+          <p>Universidad Premium enfocada en preparar profesionales del mañana con la tecnología científica del hoy.</p>
+          <div class="social-links">
+            <a href="#" class="social-icon"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#" class="social-icon"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a href="#" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" class="social-icon"><i class="fa-brands fa-github"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Programas</h4>
+          <ul>
+            <li><a href="#courses-section">Regresión Lineal</a></li>
+            <li><a href="#courses-section">Algoritmos Genéticos</a></li>
+            <li><a href="#courses-section">Machine Learning</a></li>
+            <li><a href="#courses-section">Ciencia de Datos</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Institucional</h4>
+          <ul>
+            <li><a href="#">Sobre Nosotros</a></li>
+            <li><a href="#">Docentes</a></li>
+            <li><a href="#">Investigación</a></li>
+            <li><a href="#">Contacto</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Ubicación y Soporte</h4>
+          <p style="font-size:14px; color:var(--text-muted); margin-bottom:10px;"><i class="fa-solid fa-location-dot"></i> Av. Tecnológica CyberCity, Edif. Turing, Piso 5.</p>
+          <p style="font-size:14px; color:var(--text-muted);"><i class="fa-solid fa-envelope"></i> admisiones@infinitytech.edu</p>
+        </div>
+      </div>
+      <div class="container footer-bottom">
+        <span>© 2026 Infinity Tech University. Todos los derechos reservados.</span>
+        <span>Diseñado bajo Estilo Educativo Elite.</span>
+      </div>
+    </footer>
+  </main>
+
+  <!-- ==========================================
+       SECTION 2: STUDENT DASHBOARD PORTAL
+       ========================================== -->
+  <main id="student-dashboard-section" style="display:none;">
+    <div class="container portal-layout">
+      <!-- Student Sidebar -->
+      <aside class="portal-sidebar glass-panel">
+        <div class="portal-user-card">
+          <div class="portal-avatar-ring">
+            <div class="portal-avatar" id="student-avatar-letter">S</div>
+          </div>
+          <h4 id="student-sidebar-name">Nombre Estudiante</h4>
+          <span class="portal-role-tag">Estudiante Elite</span>
+        </div>
+        
+        <ul class="portal-menu">
+          <li class="portal-menu-item"><a class="portal-menu-link active" onclick="showStudentTab('dashboard')"><i class="fa-solid fa-chart-line"></i> Resumen</a></li>
+          <li class="portal-menu-item"><a class="portal-menu-link" onclick="showStudentTab('syllabus')"><i class="fa-solid fa-book-open"></i> Mi Programa</a></li>
+          <li class="portal-menu-item"><a class="portal-menu-link" onclick="showStudentTab('setup')"><i class="fa-solid fa-gears"></i> Configuración</a></li>
+          <li class="portal-menu-item" style="margin-top:40px;"><a class="portal-menu-link" onclick="logout()" style="color:var(--danger);"><i class="fa-solid fa-power-off"></i> Salir Campus</a></li>
+        </ul>
+      </aside>
+
+      <!-- Student Content Workspace -->
+      <div class="portal-content">
+        <!-- Student Header -->
+        <div class="glass-panel" style="padding:25px; display:flex; justify-content:space-between; align-items:center;">
+          <h1 id="student-welcome-title" style="font-size:32px; margin:0;">¡Bienvenido, Académico!</h1>
+          
+          <!-- Notifications Bell dropdown trigger -->
+          <div class="notification-bell-container" onclick="toggleStudentNotifDropdown()">
+            <span style="font-size:20px; color:var(--text-muted);"><i class="fa-regular fa-bell"></i></span>
+            <div class="notification-badge" id="student-notif-badge" style="display:none;">0</div>
+            
+            <!-- Notifications Dropdown Tray -->
+            <div class="notifications-dropdown glass-panel" id="student-notif-dropdown">
+              <h4 style="font-family:'Rajdhani'; border-bottom:1px solid var(--border-light); padding-bottom:8px; margin-bottom:8px;">Bandeja Académica</h4>
+              <div id="student-notifications-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Student Tab: Resumen / Dashboard -->
+        <div id="student-tab-dashboard">
+          <div style="display:grid; grid-template-columns:1.5fr 1fr; gap:30px;">
+            <!-- Program details card -->
+            <div class="glass-panel" style="padding:40px;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:25px;">
+                <div>
+                  <h3 id="student-course-title" style="font-size:32px; color:var(--secondary); margin-bottom:10px;">CURSO ACADÉMICO</h3>
+                  <span style="font-size:13px; text-transform:uppercase; color:var(--text-muted); font-weight:700;"><i class="fa-solid fa-shield-halved"></i> Programa de Alta Tecnología</span>
+                </div>
+                <span class="badge-status aceptado" style="font-size:14px; padding:6px 14px;"><i class="fa-solid fa-circle-check"></i> ADMISIÓN APROBADA</span>
+              </div>
+              <p id="student-course-desc" style="color:var(--text-muted); margin-bottom:30px; line-height:1.6;"></p>
+              
+              <div style="display:flex; gap:30px; border-top:1px solid var(--border-light); padding-top:20px;">
+                <div>
+                  <span style="display:block; font-size:12px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Duración total</span>
+                  <span id="student-course-duration" style="font-weight:700; color:var(--text-main); font-size:15px;"></span>
+                </div>
+                <div>
+                  <span style="display:block; font-size:12px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Modalidad de Clases</span>
+                  <span id="student-course-modalidad" style="font-weight:700; color:var(--text-main); font-size:15px;"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Timetable & Academic Info -->
+            <div class="portal-content">
+              <div class="glass-panel" style="padding:30px;">
+                <h3 style="font-family:'Rajdhani'; font-size:22px; margin-bottom:20px; color:var(--secondary);"><i class="fa-regular fa-clock"></i> Horario de Laboratorios</h3>
+                <div style="border-left: 3px solid var(--primary); padding-left:15px; margin-bottom:20px;">
+                  <strong style="display:block; font-size:15px;">Lunes, Miércoles y Viernes</strong>
+                  <span style="color:var(--text-muted); font-size:13.5px;">18:00 hrs a 20:00 hrs (UTC-4)</span>
+                </div>
+                <div style="border-left: 3px solid var(--secondary); padding-left:15px;">
+                  <strong style="display:block; font-size:15px;">Sábados Interactivos (Opcional)</strong>
+                  <span style="color:var(--text-muted); font-size:13.5px;">09:00 hrs a 12:00 hrs - Mentoría Directa</span>
+                </div>
+              </div>
+
+              <!-- Student Profile card overview -->
+              <div class="glass-panel" style="padding:30px;">
+                <h3 style="font-family:'Rajdhani'; font-size:22px; margin-bottom:20px; color:var(--secondary);"><i class="fa-regular fa-id-card"></i> Ficha del Alumno</h3>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; font-size:13.5px;">
+                  <div>
+                    <span style="color:var(--text-muted); display:block;">Estudiante:</span>
+                    <strong id="student-profile-name" style="color:var(--text-main);"></strong>
+                  </div>
+                  <div>
+                    <span style="color:var(--text-muted); display:block;">Identificación:</span>
+                    <strong id="student-profile-doc" style="color:var(--text-main);"></strong>
+                  </div>
+                  <div>
+                    <span style="color:var(--text-muted); display:block;">Edad y País:</span>
+                    <strong id="student-profile-age" style="color:var(--text-main);"></strong> | <strong id="student-profile-country" style="color:var(--text-main);"></strong>
+                  </div>
+                  <div>
+                    <span style="color:var(--text-muted); display:block;">Correo Académico:</span>
+                    <strong id="student-profile-email" style="color:var(--text-main); font-size:12px;"></strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Student Tab: Syllabus Checklist -->
+        <div id="student-tab-syllabus" style="display:none;">
+          <div class="glass-panel" style="padding:40px;">
+            <h3 style="font-family:'Rajdhani'; font-size:28px; color:var(--secondary); margin-bottom:10px;"><i class="fa-solid fa-list-check"></i> Checklist de Progreso Académico</h3>
+            <p style="color:var(--text-muted); margin-bottom:30px;">Marca los módulos que has estudiado y culminado junto con tus docentes. Tu progreso es monitoreado de forma automatizada por el tutor.</p>
+            
+            <ul id="student-modules-checklist" style="padding-left:0;"></ul>
+          </div>
+        </div>
+
+        <!-- Student Tab: Setup Config -->
+        <div id="student-tab-setup" style="display:none;">
+          <div class="glass-panel" style="padding:40px;">
+            <h3 style="font-family:'Rajdhani'; font-size:28px; color:var(--secondary); margin-bottom:10px;"><i class="fa-solid fa-user-gear"></i> Configuración de Cuenta</h3>
+            <p style="color:var(--text-muted); margin-bottom:30px;">Mantén actualizado tu expediente digital y modifica tu contraseña de acceso académico si lo deseas.</p>
+            
+            <form id="student-setup-form" style="max-width:500px;">
+              <div class="form-group">
+                <label class="form-label">Teléfono de Contacto</label>
+                <input type="text" class="form-control" id="student-profile-phone-indicator" style="display:none;">
+                <input type="text" class="form-control" id="student-setup-phone" placeholder="Ingrese su teléfono celular...">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Edad del Alumno</label>
+                <input type="number" class="form-control" id="student-setup-age" placeholder="Confirme su edad...">
+              </div>
+              
+              <h4 style="font-family:'Rajdhani'; font-size:18px; color:var(--primary); margin:30px 0 15px 0; border-top:1px solid var(--border-light); padding-top:20px;">MODIFICAR CONTRASEÑA</h4>
+              
+              <div class="form-group">
+                <label class="form-label">Nueva Contraseña</label>
+                <input type="password" class="form-control" id="student-setup-pwd" placeholder="Mínimo 6 caracteres para mayor seguridad...">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Confirmar Contraseña</label>
+                <input type="password" class="form-control" id="student-setup-pwd-confirm" placeholder="Repita la nueva contraseña...">
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="margin-top:15px; width:100%;">Guardar Configuraciones</button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ==========================================
+       SECTION 3: ADMINISTRATOR DASHBOARD PORTAL
+       ========================================== -->
+  <main id="admin-dashboard-section" style="display:none;">
+    <div class="container portal-layout">
+      <!-- Admin Sidebar -->
+      <aside class="portal-sidebar glass-panel">
+        <div class="portal-user-card">
+          <div class="portal-avatar-ring">
+            <div class="portal-avatar" style="background:linear-gradient(135deg, var(--secondary), var(--primary));">A</div>
+          </div>
+          <h4>Campus Director</h4>
+          <span class="portal-role-tag" style="background:rgba(124,58,237,0.1); color:var(--primary); border-color:rgba(124,58,237,0.2);">Administrador</span>
+        </div>
+        
+        <ul class="portal-menu">
+          <li class="portal-menu-item"><a class="portal-menu-link active" onclick="showAdminTab('dashboard')"><i class="fa-solid fa-chart-pie"></i> Estadísticas</a></li>
+          <li class="portal-menu-item"><a class="portal-menu-link" onclick="showAdminTab('students')"><i class="fa-solid fa-users"></i> Estudiantes</a></li>
+          <li class="portal-menu-item"><a class="portal-menu-link" onclick="showAdminTab('emails')"><i class="fa-solid fa-envelope-open-text"></i> Buzón Virtual</a></li>
+          <li class="portal-menu-item"><a class="portal-menu-link" onclick="showAdminTab('courses')"><i class="fa-solid fa-folder-plus"></i> Crear Curso</a></li>
+          <li class="portal-menu-item" style="margin-top:40px;"><a class="portal-menu-link" onclick="logout()" style="color:var(--danger);"><i class="fa-solid fa-power-off"></i> Salir Panel</a></li>
+        </ul>
+      </aside>
+
+      <!-- Admin Main Workspace -->
+      <div class="portal-content">
+        <!-- Admin Title Header -->
+        <div class="glass-panel" style="padding:25px;">
+          <h1 style="font-size:32px; margin:0;"><i class="fa-solid fa-user-shield"></i> Panel del Administrador General</h1>
+        </div>
+
+        <!-- Admin Tab: Estadísticas / Dashboard -->
+        <div id="admin-tab-dashboard">
+          <!-- Metric counters grid row -->
+          <div class="stats-cards-row" style="margin-bottom: 30px;">
+            <div class="stat-metric-card glass-panel">
+              <div class="metric-info">
+                <h3>Total Registrados</h3>
+                <div class="metric-value" id="admin-stat-total">0</div>
+              </div>
+              <div class="metric-icon"><i class="fa-solid fa-users"></i></div>
+            </div>
+            <div class="stat-metric-card glass-panel">
+              <div class="metric-info">
+                <h3>Postulaciones Pendientes</h3>
+                <div class="metric-value" id="admin-stat-pendientes" style="color:var(--warning);">0</div>
+              </div>
+              <div class="metric-icon" style="background:rgba(245,158,11,0.1); color:var(--warning);"><i class="fa-solid fa-hourglass-half"></i></div>
+            </div>
+            <div class="stat-metric-card glass-panel">
+              <div class="metric-info">
+                <h3>Alumnos Aprobados</h3>
+                <div class="metric-value" id="admin-stat-aceptados" style="color:var(--success);">0</div>
+              </div>
+              <div class="metric-icon" style="background:rgba(16,185,129,0.1); color:var(--success);"><i class="fa-solid fa-user-check"></i></div>
+            </div>
+            <div class="stat-metric-card glass-panel">
+              <div class="metric-info">
+                <h3>Correos Despachados</h3>
+                <div class="metric-value" id="admin-stat-correos" style="color:var(--secondary);">0</div>
+              </div>
+              <div class="metric-icon" style="background:rgba(6,182,212,0.1); color:var(--secondary);"><i class="fa-solid fa-paper-plane"></i></div>
+            </div>
+          </div>
+
+          <!-- Dynamic enrollment progress bars charts -->
+          <div class="glass-panel admin-chart-widget">
+            <h3 style="font-family:'Rajdhani'; font-size:24px; color:var(--secondary);"><i class="fa-solid fa-chart-column"></i> Tasa de Solicitudes y Admisiones por Programa</h3>
+            <p style="color:var(--text-muted); font-size:14px;">Representación visual interactiva del total de alumnos postulados e inscritos en el campus virtual.</p>
+            
+            <div class="chart-bar-container" id="admin-chart-bars"></div>
+          </div>
+        </div>
+
+        <!-- Admin Tab: Estudiantes -->
+        <div id="admin-tab-students" style="display:none;">
+          <div class="glass-panel" style="padding:30px;">
+            <h3 style="font-family:'Rajdhani'; font-size:28px; color:var(--secondary); margin-bottom:20px;"><i class="fa-solid fa-users-gear"></i> Gestión y Control de Expedientes Académicos</h3>
+            
+            <!-- Toolbar search filter bars -->
+            <div class="admin-toolbar glass-panel" style="margin-bottom: 25px;">
+              <div class="toolbar-search">
+                <input type="text" class="form-control" id="admin-search-student" placeholder="Buscar por Nombre, Documento o Correo..." onkeyup="loadAdminStudentsList()">
+              </div>
+              <div class="toolbar-filters">
+                <select class="form-control" id="admin-filter-curso" onchange="loadAdminStudentsList()"></select>
+                <select class="form-control" id="admin-filter-estado" onchange="loadAdminStudentsList()">
+                  <option value="">Todos los Estados</option>
+                  <option value="PENDIENTE">Pendientes</option>
+                  <option value="ACEPTADO">Aceptados</option>
+                  <option value="RECHAZADO">Rechazados</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Student roster responsive table -->
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Estudiante</th>
+                    <th>Documento</th>
+                    <th>País / Celular</th>
+                    <th>Edad</th>
+                    <th>Curso Solicitado</th>
+                    <th>Estado Admisión</th>
+                    <th>Credenciales Campus</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-students-table-body"></tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Admin Tab: Buzón Virtual (Mail Viewer Logs) -->
+        <div id="admin-tab-emails" style="display:none;">
+          <div class="glass-panel" style="padding:40px;">
+            <h3 style="font-family:'Rajdhani'; font-size:28px; color:var(--secondary); margin-bottom:10px;"><i class="fa-solid fa-inbox"></i> Buzón Virtual de Admisión (Carta Preview)</h3>
+            <p style="color:var(--text-muted); margin-bottom:30px;">Dado que los accesos SMTP pueden requerir credenciales personales, el sistema almacena aquí una copia con el diseño HTML de cada correo de bienvenida despachado. Haga clic en cualquiera para abrirlo en el sandbox del visor interactivo.</p>
+            
+            <div class="mail-list" id="admin-mails-inbox-list"></div>
+          </div>
+        </div>
+
+        <!-- Admin Tab: Crear Curso -->
+        <div id="admin-tab-courses" style="display:none;">
+          <div class="glass-panel" style="padding:40px;">
+            <h3 style="font-family:'Rajdhani'; font-size:28px; color:var(--secondary); margin-bottom:10px;"><i class="fa-solid fa-folder-plus"></i> Crear Nuevo Curso Tecnológico</h3>
+            <p style="color:var(--text-muted); margin-bottom:30px;">Llena el siguiente formulario curricular para habilitar inmediatamente una nueva especialización académica en el listado del Home.</p>
+            
+            <form id="course-create-form" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+              <div class="form-group" style="grid-column: span 2;">
+                <label class="form-label">Título del Curso (Obligatorio)</label>
+                <input type="text" class="form-control" id="course-create-titulo" placeholder="Ej. Deep Learning y Redes Neuronales" required>
+              </div>
+              <div class="form-group" style="grid-column: span 2;">
+                <label class="form-label">Descripción Académica Completa (Obligatorio)</label>
+                <textarea class="form-control" id="course-create-desc" rows="4" placeholder="Explique exhaustivamente los objetivos del programa..." required style="resize:none; font-family:inherit;"></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Duración Académica (Obligatorio)</label>
+                <input type="text" class="form-control" id="course-create-duracion" placeholder="Ej. 12 Semanas (100 Horas)" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Modalidad (Obligatorio)</label>
+                <select class="form-control" id="course-create-modalidad" required>
+                  <option value="Online - Clases en Vivo">Online - Clases en Vivo</option>
+                  <option value="Presencial Avanzado">Presencial Avanzado</option>
+                  <option value="Semipresencial Híbrido">Semipresencial Híbrido</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nivel de Dificultad (Obligatorio)</label>
+                <select class="form-control" id="course-create-dificultad" required>
+                  <option value="Principiante">Principiante</option>
+                  <option value="Intermedio">Intermedio</option>
+                  <option value="Avanzado">Avanzado</option>
+                  <option value="Doctorado Profesional">Doctorado Profesional</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">URL de Imagen Representativa</label>
+                <input type="url" class="form-control" id="course-create-img" placeholder="https://images.unsplash.com/... (Dejar vacío para genérica)">
+              </div>
+              <div class="form-group" style="grid-column: span 2;">
+                <label class="form-label">Perfil Recomendado del Egresado</label>
+                <input type="text" class="form-control" id="course-create-perfil" placeholder="Describa el perfil del profesional egresado...">
+              </div>
+              <div class="form-group" style="grid-column: span 2;">
+                <label class="form-label">Módulos/Temas Principales (Separados por coma)</label>
+                <input type="text" class="form-control" id="course-create-temas" placeholder="Tema 1, Tema 2, Tema 3...">
+              </div>
+              <div class="form-group" style="grid-column: span 2;">
+                <label class="form-label">Aplicaciones Reales del Curso (Separadas por coma)</label>
+                <input type="text" class="form-control" id="course-create-apps" placeholder="Aplicación A, Aplicación B...">
+              </div>
+              <div class="form-group" style="grid-column: span 2;">
+                <label class="form-label">Tecnologías Utilizadas (Separadas por coma)</label>
+                <input type="text" class="form-control" id="course-create-techs" placeholder="Python, TensorFlow, PyTorch...">
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="grid-column: span 2; margin-top:20px;">Crear Especialización en el Campus</button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ==========================================
+       MODALS LAYER: REGISTRATION, LOGIN, & MAIL VIEW
+       ========================================== -->
+  
+  <!-- LOGIN MODAL -->
+  <div class="modal-overlay" id="login-modal">
+    <div class="modal-content glass-panel">
+      <button class="modal-close" onclick="closeAllModals()">&times;</button>
+      <div class="modal-header">
+        <h3>Campus Login</h3>
+        <p>Ingrese sus credenciales estudiantiles oficiales.</p>
+      </div>
+
+      <form id="login-form">
+        <!-- Student vs Admin checkbox selector -->
+        <div class="form-group" style="display:flex; align-items:center; gap:10px; margin-bottom:25px;">
+          <input type="checkbox" id="login-is-admin" style="width:18px; height:18px; accent-color:var(--primary); cursor:pointer;">
+          <label for="login-is-admin" style="font-family:'Rajdhani'; font-weight:700; text-transform:uppercase; font-size:13px; color:var(--secondary); letter-spacing:1px; cursor:pointer;">
+            ¿Acceso Administrativo?
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" id="login-identificador-label">Correo Gmail / Usuario Asignado</label>
+          <input type="text" class="form-control" id="login-identificador" placeholder="ejemplo@gmail.com o usuario_fit..." required>
+        </div>
+        <div class="form-group">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label class="form-label">Contraseña</label>
+            <a href="#" onclick="triggerPasswordRecovery()" style="font-size:12px; color:var(--secondary); font-weight:600; margin-bottom:8px;">¿Olvidó su contraseña?</a>
+          </div>
+          <div style="position:relative;">
+            <input type="password" class="form-control" id="login-contrasena" placeholder="Ingrese su contraseña..." required>
+            <span style="position:absolute; right:15px; top:12px; cursor:pointer; color:var(--text-muted);" onclick="togglePasswordVisibility('login-contrasena')">
+              <i class="fa-regular fa-eye-slash" id="eye-icon-login-contrasena"></i>
+            </span>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%; margin-top:20px;">Iniciar Sesión</button>
+      </form>
+
+      <div class="modal-footer" id="login-footer-register">
+        ¿Aún no te has postulado? <a href="#" onclick="openRegisterModal()">Postularse ahora</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- REGISTRATION MODAL -->
+  <div class="modal-overlay" id="register-modal">
+    <div class="modal-content glass-panel" style="max-width: 600px;">
+      <button class="modal-close" onclick="closeAllModals()">&times;</button>
+      <div class="modal-header">
+        <h3>Postulación Digital</h3>
+        <p>Complete su expediente oficial para evaluación del Comité.</p>
+      </div>
+
+      <form id="register-form" style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+        <div class="form-group" style="grid-column: span 2;">
+          <label class="form-label">Nombre Completo (Obligatorio)</label>
+          <input type="text" class="form-control" id="reg-nombre" placeholder="Ingrese sus nombres y apellidos..." required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Documento Identidad (Cédula/Pasaporte)</label>
+          <input type="text" class="form-control" id="reg-documento" placeholder="Ej: V-25444333" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Correo Gmail Válido (Obligatorio)</label>
+          <input type="email" class="form-control" id="reg-correo" placeholder="ejemplo@gmail.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Celular de Contacto</label>
+          <input type="tel" class="form-control" id="reg-telefono" placeholder="Ej: +58 412 1234567" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Edad del Candidato</label>
+          <input type="number" class="form-control" id="reg-edad" placeholder="Edad mínima 16 años" required min="16">
+        </div>
+        <div class="form-group">
+          <label class="form-label">País de Residencia</label>
+          <input type="text" class="form-control" id="reg-pais" placeholder="Ej: Venezuela, Perú, México..." required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Especialización Deseada</label>
+          <select class="form-control" id="reg-curso" required></select>
+        </div>
+        
+        <div class="form-group" style="position:relative;">
+          <label class="form-label">Contraseña Personal</label>
+          <input type="password" class="form-control" id="reg-contrasena" placeholder="Min. 6 caracteres..." required>
+          <span style="position:absolute; right:15px; top:36px; cursor:pointer; color:var(--text-muted);" onclick="togglePasswordVisibility('reg-contrasena')">
+            <i class="fa-regular fa-eye-slash" id="eye-icon-reg-contrasena"></i>
+          </span>
+          <div class="pwd-strength-bar">
+            <div class="pwd-strength-fill" id="pwd-strength-fill"></div>
+          </div>
+        </div>
+        <div class="form-group" style="position:relative;">
+          <label class="form-label">Confirmar Contraseña</label>
+          <input type="password" class="form-control" id="reg-contrasena-confirm" placeholder="Repita la contraseña..." required>
+          <span style="position:absolute; right:15px; top:36px; cursor:pointer; color:var(--text-muted);" onclick="togglePasswordVisibility('reg-contrasena-confirm')">
+            <i class="fa-regular fa-eye-slash" id="eye-icon-reg-contrasena-confirm"></i>
+          </span>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="grid-column: span 2; margin-top:15px; width:100%;">Enviar Postulación Académica</button>
+      </form>
+
+      <div class="modal-footer">
+        ¿Ya posee expediente? <a href="#" onclick="openLoginModal()">Iniciar Sesión</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMAIL SANDBOX IFRAME VISUALIZER MODAL -->
+  <div class="modal-overlay" id="email-visualizer-modal">
+    <div class="modal-content glass-panel" style="max-width: 800px; padding: 25px; height:85vh; display:flex; flex-direction:column; overflow:hidden;">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-light); padding-bottom:15px; margin-bottom:15px;">
+        <h3 style="font-family:'Rajdhani'; font-size:24px; color:var(--secondary); margin:0;"><i class="fa-solid fa-envelope-circle-check"></i> Carta de Admisión Enviada (Vista Virtual)</h3>
+        <button class="btn btn-secondary" onclick="closeEmailVisualizerModal()" style="padding:6px 14px; font-size:12px; border-radius:6px;">Cerrar Visualizador</button>
+      </div>
+      
+      <!-- Sandboxed iframe viewer -->
+      <iframe id="email-iframe-viewer" style="width:100%; flex-grow:1; border: 1px solid var(--border-light); border-radius:8px; background:white;"></iframe>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SECTION 4: SUPPORT CHAT FAQ WIDGET
+       ========================================== -->
+  <div class="chat-widget">
+    <div class="chat-bubble" id="chat-bubble" title="Soporte y FAQs Académicas">
+      <i class="fa-solid fa-headset"></i>
+    </div>
+    
+    <div class="chat-window glass-panel" id="chat-window">
+      <!-- Header -->
+      <div class="chat-header">
+        <div class="logo-icon" style="width:30px; height:30px; font-size:14px;"><i class="fa-solid fa-robot"></i></div>
+        <div>
+          <h4>Asistente Turing</h4>
+          <span>Soporte IA Académico Online</span>
+        </div>
+      </div>
+      <!-- Messages Board -->
+      <div class="chat-messages" id="chat-messages">
+        <div class="chat-msg bot">
+          ¡Hola! Soy el asistente virtual de admisiones de Infinity Tech. Haz clic en cualquiera de las consultas rápidas o escríbeme directamente tu duda:
+          <div class="chat-options-box">
+            <button class="chat-option-btn" data-faq="requisitos">¿Cuáles son los Requisitos?</button>
+            <button class="chat-option-btn" data-faq="costos">¿Qué costos tiene?</button>
+            <button class="chat-option-btn" data-faq="duracion">¿Cuánto duran los cursos?</button>
+            <button class="chat-option-btn" data-faq="hardware">¿Qué computadora necesito?</button>
+          </div>
+        </div>
+      </div>
+      <!-- Text Inputs Area -->
+      <div class="chat-input-area">
+        <input type="text" id="chat-input" placeholder="Pregúntame sobre los cursos, becas...">
+        <button class="chat-send-btn" id="chat-send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       INTERACTIVE HELPER CONTROLLERS
+       ========================================== -->
+  <script>
+    // --- MODAL UTILITIES ---
+    function openLoginModal() {
+      closeAllModals();
+      document.getElementById('login-modal').classList.add('active');
+    }
+    
+    function openRegisterModal(courseId = '') {
+      closeAllModals();
+      const modal = document.getElementById('register-modal');
+      const select = document.getElementById('reg-curso');
+      
+      if (courseId && select) {
+        select.value = courseId;
+      }
+      modal.classList.add('active');
+    }
+    
+    function closeAllModals() {
+      document.getElementById('login-modal').classList.remove('active');
+      document.getElementById('register-modal').classList.remove('active');
+      document.getElementById('email-visualizer-modal').classList.remove('active');
+    }
+
+    function togglePasswordVisibility(inputId) {
+      const input = document.getElementById(inputId);
+      const eyeIcon = document.getElementById(`eye-icon-${inputId}`);
+      if (!input || !eyeIcon) return;
+
+      if (input.type === 'password') {
+        input.type = 'text';
+        eyeIcon.classList.remove('fa-eye-slash');
+        eyeIcon.classList.add('fa-eye');
+      } else {
+        input.type = 'password';
+        eyeIcon.classList.remove('fa-eye');
+        eyeIcon.classList.add('fa-eye-slash');
+      }
+    }
+
+    // --- TAB SWITCHERS (STUDENT & ADMIN PORTAL) ---
+    function showStudentTab(tabName) {
+      // Clear active sidebar link styling
+      const sidebarLinks = document.querySelectorAll('#student-dashboard-section .portal-menu-link');
+      sidebarLinks.forEach(l => l.classList.remove('active'));
+
+      // Find link that matches tab
+      let linkIndex = 0;
+      if (tabName === 'syllabus') linkIndex = 1;
+      if (tabName === 'setup') linkIndex = 2;
+      sidebarLinks[linkIndex].classList.add('active');
+
+      // Hide tabs
+      document.getElementById('student-tab-dashboard').style.display = 'none';
+      document.getElementById('student-tab-syllabus').style.display = 'none';
+      document.getElementById('student-tab-setup').style.display = 'none';
+
+      // Show targeted tab
+      document.getElementById(`student-tab-${tabName}`).style.display = 'block';
+    }
+
+    function showAdminTab(tabName) {
+      // Clear active sidebar link styling
+      const sidebarLinks = document.querySelectorAll('#admin-dashboard-section .portal-menu-link');
+      sidebarLinks.forEach(l => l.classList.remove('active'));
+
+      // Find link that matches tab
+      let linkIndex = 0;
+      if (tabName === 'students') linkIndex = 1;
+      if (tabName === 'emails') linkIndex = 2;
+      if (tabName === 'courses') linkIndex = 3;
+      sidebarLinks[linkIndex].classList.add('active');
+
+      // Hide tabs
+      document.getElementById('admin-tab-dashboard').style.display = 'none';
+      document.getElementById('admin-tab-students').style.display = 'none';
+      document.getElementById('admin-tab-emails').style.display = 'none';
+      document.getElementById('admin-tab-courses').style.display = 'none';
+
+      // Show targeted tab
+      document.getElementById(`admin-tab-${tabName}`).style.display = 'block';
+
+      // If switching to students, auto load students list
+      if (tabName === 'students') {
+        loadAdminStudentsList();
+      }
+    }
+
+    // --- MOBILE MENU ---
+    function toggleMobileMenu() {
+      const nav = document.querySelector('header nav');
+      if (nav.style.display === 'block') {
+        nav.style.display = 'none';
+      } else {
+        nav.style.display = 'block';
+      }
+    }
+  </script>
+
+  <!-- Load core javascript scripts -->
+  <script src="js/theme.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
