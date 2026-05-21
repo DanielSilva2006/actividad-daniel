@@ -745,9 +745,11 @@
           <label class="form-label">País de Residencia</label>
           <input type="text" class="form-control" id="reg-pais" placeholder="Ej: Venezuela, Perú, México..." required>
         </div>
-        <div class="form-group">
-          <label class="form-label">Especialización Deseada</label>
-          <select class="form-control" id="reg-curso" required></select>
+        <div class="form-group" style="grid-column: span 2;">
+          <label class="form-label">Especializaciones Deseadas (Puede seleccionar varias)</label>
+          <div id="reg-cursos-container" style="display:flex; gap:15px; flex-wrap:wrap; margin-top:10px; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; border: 1px solid var(--border-light);">
+            <!-- Checkboxes injected by JS -->
+          </div>
         </div>
         
         <div class="form-group" style="position:relative;">

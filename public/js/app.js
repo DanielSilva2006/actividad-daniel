@@ -89,15 +89,33 @@ async function loadHomeCourses() {
     const courses = await apiRequest('/api/courses');
     appState.courses = courses;
     
-    // Fill Registration Form Selector options
-    const select = document.getElementById('reg-curso');
-    if (select) {
-      select.innerHTML = '<option value="" disabled selected>Seleccione el curso...</option>';
+    // Fill Registration Form Checkboxes
+    const checkboxContainer = document.getElementById('reg-cursos-container');
+    if (checkboxContainer) {
+      checkboxContainer.innerHTML = '';
       courses.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.id;
-        opt.textContent = c.titulo.toUpperCase();
-        select.appendChild(opt);
+        const label = document.createElement('label');
+        label.style.cssText = 'display:flex; align-items:center; gap:10px; padding:12px 18px; border-radius:10px; border:1px solid var(--border-light); cursor:pointer; transition:all 0.3s ease; flex:1; min-width:200px; background:rgba(255,255,255,0.03);';
+        label.innerHTML = `
+          <input type="checkbox" name="reg-cursos" value="${c.id}" style="width:20px; height:20px; accent-color:var(--secondary); cursor:pointer;">
+          <div>
+            <strong style="display:block; color:var(--text-main); font-size:14px;">${c.titulo}</strong>
+            <span style="font-size:12px; color:var(--text-muted);">${c.dificultad} · ${c.duracion}</span>
+          </div>
+        `;
+        // Hover effect
+        label.addEventListener('mouseenter', () => { label.style.borderColor = 'var(--secondary)'; label.style.background = 'rgba(6,182,212,0.05)'; });
+        label.addEventListener('mouseleave', () => { 
+          const cb = label.querySelector('input');
+          if (!cb.checked) { label.style.borderColor = 'var(--border-light)'; label.style.background = 'rgba(255,255,255,0.03)'; }
+        });
+        // Checked style
+        const cb = label.querySelector('input');
+        cb.addEventListener('change', () => {
+          if (cb.checked) { label.style.borderColor = 'var(--secondary)'; label.style.background = 'rgba(6,182,212,0.08)'; }
+          else { label.style.borderColor = 'var(--border-light)'; label.style.background = 'rgba(255,255,255,0.03)'; }
+        });
+        checkboxContainer.appendChild(label);
       });
     }
 
@@ -232,11 +250,12 @@ function initRegistrationValidation() {
     const pais = document.getElementById('reg-pais').value.trim();
     const contrasena = pwdInput.value;
     const contrasenaConfirm = pwdConfirmInput.value;
-    const curso_id = document.getElementById('reg-curso').value;
+    const checkedBoxes = document.querySelectorAll('input[name="reg-cursos"]:checked');
+    const cursos_ids = Array.from(checkedBoxes).map(cb => parseInt(cb.value, 10));
 
     // Field Checks
-    if (!nombre || !documento || !correo || !telefono || !edad || !pais || !contrasena || !curso_id) {
-      showToast('Por favor, rellene todos los campos del expediente.', 'error');
+    if (!nombre || !documento || !correo || !telefono || !edad || !pais || !contrasena || cursos_ids.length === 0) {
+      showToast('Por favor, rellene todos los campos y seleccione al menos un curso.', 'error');
       return;
     }
 
@@ -267,7 +286,7 @@ function initRegistrationValidation() {
         edad: parseInt(edad, 10),
         pais,
         contrasena,
-        curso_id: parseInt(curso_id, 10)
+        cursos_ids
       });
 
       if (res.success) {
@@ -398,11 +417,12 @@ async function loadStudentDashboard() {
     const courseDurationEl = document.getElementById('student-course-duration');
     const courseModalidadEl = document.getElementById('student-course-modalidad');
     
-    if (data.course) {
-      courseTitleEl.textContent = data.course.titulo.toUpperCase();
-      courseDescEl.textContent = data.course.descripcion;
-      courseDurationEl.textContent = data.course.duracion;
-      courseModalidadEl.textContent = data.course.modalidad;
+    if (data.courses && data.courses.length > 0) {
+      const courseNames = data.courses.map(c => c.titulo).join(' + ');
+      courseTitleEl.textContent = courseNames.toUpperCase();
+      courseDescEl.textContent = data.courses.map(c => c.descripcion).join(' | ');
+      courseDurationEl.textContent = data.courses.map(c => c.duracion).join(' / ');
+      courseModalidadEl.textContent = data.courses[0].modalidad;
     }
 
     // Dynamic Syllabus/Modules List Checklist
@@ -410,33 +430,59 @@ async function loadStudentDashboard() {
     syllabusList.innerHTML = '';
     
     if (data.modules.length === 0) {
-      syllabusList.innerHTML = '<li class="glass-panel" style="padding:15px; text-align:center;">No hay módulos registrados en este curso.</li>';
+      syllabusList.innerHTML = '<li class="glass-panel" style="padding:15px; text-align:center;">No hay módulos registrados en tus cursos.</li>';
     } else {
       // Pull completed modules cache from local storage so student can tick off lessons!
       const completedModules = JSON.parse(localStorage.getItem(`fit_completed_${data.student.id}`) || '[]');
-      
-      data.modules.forEach(m => {
-        const isChecked = completedModules.includes(m.id) ? 'checked' : '';
-        const item = document.createElement('li');
-        item.className = 'glass-panel';
-        item.style.padding = '15px 20px';
-        item.style.marginBottom = '12px';
-        item.style.display = 'flex';
-        item.style.alignItems = 'center';
-        item.style.gap = '15px';
-        item.style.listStyle = 'none';
 
-        item.innerHTML = `
-          <input type="checkbox" id="module-check-${m.id}" data-mid="${m.id}" ${isChecked} 
-                 style="width:20px; height:20px; accent-color:var(--secondary); cursor:pointer;" 
-                 onchange="toggleModuleCheck(this, ${data.student.id})">
-          <label for="module-check-${m.id}" style="cursor:pointer; flex-grow:1;">
-            <strong style="display:block; color:var(--text-main); font-size:15px;">${m.titulo}</strong>
-            <span style="color:var(--text-muted); font-size:13px; line-height:1.4; display:block; margin-top:4px;">${m.descripcion}</span>
-          </label>
-        `;
-        syllabusList.appendChild(item);
-      });
+      // Group modules by course
+      if (data.courses && data.courses.length > 0) {
+        data.courses.forEach(course => {
+          const courseModules = data.modules.filter(m => m.curso_id === course.id);
+          if (courseModules.length === 0) return;
+
+          // Course section header
+          const courseHeader = document.createElement('li');
+          courseHeader.style.cssText = 'list-style:none; margin-bottom:8px; margin-top:20px; padding:12px 20px; background:linear-gradient(135deg, rgba(6,182,212,0.1), rgba(124,58,237,0.1)); border-radius:10px; border-left:4px solid var(--secondary);';
+          courseHeader.innerHTML = `<strong style="font-family:'Rajdhani'; font-size:18px; color:var(--secondary); text-transform:uppercase;"><i class="fa-solid fa-book"></i> ${course.titulo}</strong>`;
+          syllabusList.appendChild(courseHeader);
+
+          courseModules.forEach(m => {
+            const isChecked = completedModules.includes(m.id) ? 'checked' : '';
+            const item = document.createElement('li');
+            item.className = 'glass-panel';
+            item.style.cssText = 'padding:15px 20px; margin-bottom:12px; display:flex; align-items:center; gap:15px; list-style:none;';
+            item.innerHTML = `
+              <input type="checkbox" id="module-check-${m.id}" data-mid="${m.id}" ${isChecked} 
+                     style="width:20px; height:20px; accent-color:var(--secondary); cursor:pointer;" 
+                     onchange="toggleModuleCheck(this, ${data.student.id})">
+              <label for="module-check-${m.id}" style="cursor:pointer; flex-grow:1;">
+                <strong style="display:block; color:var(--text-main); font-size:15px;">${m.titulo}</strong>
+                <span style="color:var(--text-muted); font-size:13px; line-height:1.4; display:block; margin-top:4px;">${m.descripcion}</span>
+              </label>
+            `;
+            syllabusList.appendChild(item);
+          });
+        });
+      } else {
+        // Fallback: render modules without grouping
+        data.modules.forEach(m => {
+          const isChecked = completedModules.includes(m.id) ? 'checked' : '';
+          const item = document.createElement('li');
+          item.className = 'glass-panel';
+          item.style.cssText = 'padding:15px 20px; margin-bottom:12px; display:flex; align-items:center; gap:15px; list-style:none;';
+          item.innerHTML = `
+            <input type="checkbox" id="module-check-${m.id}" data-mid="${m.id}" ${isChecked} 
+                   style="width:20px; height:20px; accent-color:var(--secondary); cursor:pointer;" 
+                   onchange="toggleModuleCheck(this, ${data.student.id})">
+            <label for="module-check-${m.id}" style="cursor:pointer; flex-grow:1;">
+              <strong style="display:block; color:var(--text-main); font-size:15px;">${m.titulo}</strong>
+              <span style="color:var(--text-muted); font-size:13px; line-height:1.4; display:block; margin-top:4px;">${m.descripcion}</span>
+            </label>
+          `;
+          syllabusList.appendChild(item);
+        });
+      }
     }
 
     // Populate Account Setup Forms fields

@@ -84,10 +84,10 @@ app.get('/api/courses/:id/modules', async (req, res) => {
 // ==========================================
 
 app.post('/api/auth/register', async (req, res) => {
-  const { nombre, documento, correo, telefono, edad, pais, contrasena, curso_id } = req.body;
+  const { nombre, documento, correo, telefono, edad, pais, contrasena, cursos_ids } = req.body;
   
-  if (!nombre || !documento || !correo || !telefono || !edad || !pais || !contrasena || !curso_id) {
-    return res.status(400).json({ error: 'Por favor complete todos los campos obligatorios.' });
+  if (!nombre || !documento || !correo || !telefono || !edad || !pais || !contrasena || !cursos_ids || !Array.isArray(cursos_ids) || cursos_ids.length === 0) {
+    return res.status(400).json({ error: 'Por favor complete todos los campos obligatorios y seleccione al menos un curso.' });
   }
 
   const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
@@ -106,8 +106,10 @@ app.post('/api/auth/register', async (req, res) => {
     const existingDoc = await db.selectOne('usuarios', u => u.documento === documento);
     if (existingDoc) return res.status(400).json({ error: 'Este documento de identidad ya se encuentra registrado.' });
 
-    const course = await db.selectOne('cursos', c => c.id === parseInt(curso_id, 10));
-    if (!course) return res.status(400).json({ error: 'El curso seleccionado no es válido.' });
+    // Verify all courses exist
+    const parsedCourseIds = cursos_ids.map(id => parseInt(id, 10));
+    const validCourses = await db.select('cursos', c => parsedCourseIds.includes(c.id));
+    if (validCourses.length !== parsedCourseIds.length) return res.status(400).json({ error: 'Uno o más cursos seleccionados no son válidos.' });
 
     const newStudent = await db.insert('usuarios', {
       nombre,
@@ -117,7 +119,7 @@ app.post('/api/auth/register', async (req, res) => {
       edad: parseInt(edad, 10),
       pais,
       contrasena: hashPassword(contrasena),
-      curso_id: parseInt(curso_id, 10),
+      cursos_ids: parsedCourseIds,
       estado: 'PENDIENTE',
       usuario_acceso: null,
       contrasena_acceso: null
@@ -242,8 +244,11 @@ app.get('/api/student/dashboard', authenticateStudent, async (req, res) => {
     const student = await db.selectOne('usuarios', u => u.id === req.user.id);
     if (!student) return res.status(404).json({ error: 'Estudiante no encontrado.' });
 
-    const course = await db.selectOne('cursos', c => c.id === student.curso_id);
-    const modules = await db.select('modulos', m => m.curso_id === student.curso_id);
+    // Handle stringified JSON from Supabase fallback or array
+    const courseIds = typeof student.cursos_ids === 'string' ? JSON.parse(student.cursos_ids) : (student.cursos_ids || []);
+    
+    const courses = await db.select('cursos', c => courseIds.includes(c.id));
+    const modules = await db.select('modulos', m => courseIds.includes(m.curso_id));
     const notifications = await db.select('notificaciones', n => n.usuario_id === student.id);
 
     const notificationsSorted = notifications.sort((a, b) => new Date(b.creado_en) - new Date(a.creado_en));
@@ -254,7 +259,7 @@ app.get('/api/student/dashboard', authenticateStudent, async (req, res) => {
         telefono: student.telefono, edad: student.edad, pais: student.pais, estado: student.estado,
         usuario_acceso: student.usuario_acceso, contrasena_acceso: student.contrasena_acceso
       },
-      course: course || null,
+      courses: courses,
       modules: modules.sort((a, b) => a.orden - b.orden),
       notifications: notificationsSorted
     });
@@ -314,8 +319,14 @@ app.get('/api/admin/dashboard-stats', authenticateAdmin, async (req, res) => {
     const rejectedCount = students.filter(s => s.estado === 'RECHAZADO').length;
 
     const enrollmentByCourse = courses.map(c => {
-      const count = students.filter(s => s.curso_id === c.id && s.estado === 'ACEPTADO').length;
-      const pending = students.filter(s => s.curso_id === c.id && s.estado === 'PENDIENTE').length;
+      const count = students.filter(s => {
+        const ids = typeof s.cursos_ids === 'string' ? JSON.parse(s.cursos_ids) : (s.cursos_ids || []);
+        return ids.includes(c.id) && s.estado === 'ACEPTADO';
+      }).length;
+      const pending = students.filter(s => {
+        const ids = typeof s.cursos_ids === 'string' ? JSON.parse(s.cursos_ids) : (s.cursos_ids || []);
+        return ids.includes(c.id) && s.estado === 'PENDIENTE';
+      }).length;
       return { id: c.id, titulo: c.titulo, aceptados: count, pendientes: pending };
     });
 
@@ -337,8 +348,9 @@ app.get('/api/admin/students', authenticateAdmin, async (req, res) => {
     const courses = await db.select('cursos');
 
     students = students.map(s => {
-      const course = courses.find(c => c.id === s.curso_id);
-      return { ...s, curso_titulo: course ? course.titulo : 'N/A' };
+      const courseIds = typeof s.cursos_ids === 'string' ? JSON.parse(s.cursos_ids) : (s.cursos_ids || []);
+      const studentCourses = courses.filter(c => courseIds.includes(c.id)).map(c => c.titulo);
+      return { ...s, curso_titulo: studentCourses.length > 0 ? studentCourses.join(', ') : 'N/A' };
     });
 
     if (busqueda) {
@@ -346,7 +358,13 @@ app.get('/api/admin/students', authenticateAdmin, async (req, res) => {
       students = students.filter(s => s.nombre.toLowerCase().includes(term) || s.documento.toLowerCase().includes(term) || s.correo.toLowerCase().includes(term));
     }
 
-    if (curso_id) students = students.filter(s => s.curso_id === parseInt(curso_id, 10));
+    if (curso_id) {
+      const searchId = parseInt(curso_id, 10);
+      students = students.filter(s => {
+        const ids = typeof s.cursos_ids === 'string' ? JSON.parse(s.cursos_ids) : (s.cursos_ids || []);
+        return ids.includes(searchId);
+      });
+    }
     if (estado) students = students.filter(s => s.estado === estado);
 
     students.sort((a, b) => new Date(b.creado_en) - new Date(a.creado_en));
@@ -365,8 +383,9 @@ app.post('/api/admin/students/:id/approve', authenticateAdmin, async (req, res) 
     if (!student) return res.status(404).json({ error: 'Estudiante no registrado.' });
     if (student.estado === 'ACEPTADO') return res.status(400).json({ error: 'El estudiante ya se encuentra aceptado en el sistema.' });
 
-    const course = await db.selectOne('cursos', c => c.id === student.curso_id);
-    const courseName = course ? course.titulo : 'Especialización Tecnológica';
+    const courseIds = typeof student.cursos_ids === 'string' ? JSON.parse(student.cursos_ids) : (student.cursos_ids || []);
+    const enrolledCourses = await db.select('cursos', c => courseIds.includes(c.id));
+    const courseName = enrolledCourses.length > 0 ? enrolledCourses.map(c => c.titulo).join(', ') : 'Especialización Tecnológica';
 
     const cleanName = student.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '');
     const uniqueSuffix = Math.floor(100 + Math.random() * 900);
@@ -385,7 +404,7 @@ app.post('/api/admin/students/:id/approve', authenticateAdmin, async (req, res) 
     await db.insert('notificaciones', {
       usuario_id: studentId,
       titulo: '¡Admisión Oficial Aprobada!',
-      mensaje: `Felicidades, has sido aceptado en Infinity Tech University. Cursarás "${courseName}". Tus credenciales académicas son: Usuario: ${generatedUsername} | Contraseña: ${generatedPassword}.`,
+      mensaje: `Felicidades, has sido aceptado en Infinity Tech University. Cursarás: "${courseName}". Tus credenciales académicas son: Usuario: ${generatedUsername} | Contraseña: ${generatedPassword}.`,
       leida: false
     });
 

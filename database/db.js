@@ -75,7 +75,7 @@ async function initializeDatabase() {
         edad INTEGER,
         pais VARCHAR(100),
         contrasena TEXT NOT NULL,
-        curso_id INTEGER REFERENCES cursos(id) ON DELETE SET NULL,
+        cursos_ids JSONB DEFAULT '[]',
         estado VARCHAR(20) DEFAULT 'PENDIENTE',
         usuario_acceso VARCHAR(100),
         contrasena_acceso VARCHAR(100),
@@ -83,6 +83,14 @@ async function initializeDatabase() {
         actualizado_en TIMESTAMP DEFAULT NOW()
       );
     `);
+
+    // Migración automática para la base de datos en Supabase
+    try {
+      await client.query(`ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS cursos_ids JSONB DEFAULT '[]'`);
+      // Intentar migrar los datos viejos si existían
+      await client.query(`UPDATE usuarios SET cursos_ids = jsonb_build_array(curso_id) WHERE curso_id IS NOT NULL AND jsonb_typeof(cursos_ids) = 'array' AND jsonb_array_length(cursos_ids) = 0`);
+    } catch(e) {}
+
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS modulos (
@@ -177,23 +185,24 @@ async function initializeDatabase() {
       ]);
     }
 
-    // 3. Seed Modulos
+    // 3. Seed Modulos (Forzar actualización borrando primero los existentes para este test)
+    await client.query('DELETE FROM modulos');
     const modulosCheck = await client.query('SELECT COUNT(*) FROM modulos');
     if (parseInt(modulosCheck.rows[0].count, 10) === 0) {
-      console.log('Sembrando módulos de cursos...');
+      console.log('Sembrando módulos de cursos desde la pizarra...');
 
       // Get the IDs that were assigned by PostgreSQL
       const cursosRows = await client.query('SELECT id, titulo FROM cursos ORDER BY id');
-      const curso1Id = cursosRows.rows[0]?.id;
-      const curso2Id = cursosRows.rows[1]?.id;
+      const curso1Id = cursosRows.rows[0]?.id; // Regresión Lineal
+      const curso2Id = cursosRows.rows[1]?.id; // Algoritmo Genético
 
       if (curso1Id) {
         const mods1 = [
-          [curso1Id, 1, 'Módulo 1: Introducción a Machine Learning y Conceptos Estadísticos', 'Diferenciación entre aprendizaje supervisado y no supervisado. Repaso matemático de la ecuación de la recta, pendiente e intercepto.'],
-          [curso1Id, 2, 'Módulo 2: Variables Dependientes e Independientes en Modelos Lineales', 'Identificación de correlaciones, covarianza y causalidad. Preparación de variables explicativas y objetivo.'],
-          [curso1Id, 3, 'Módulo 3: Configuración del Entorno de Python (NumPy, Pandas y Matplotlib)', 'Instalación de dependencias. Limpieza y carga de datasets reales (.csv) con Pandas. Análisis exploratorio gráfico.'],
-          [curso1Id, 4, 'Módulo 4: Entrenamiento y Evaluación con Scikit-Learn', 'Ajuste del regresor lineal. División train/test. Evaluación de métricas de rendimiento estadístico (MSE, MAE, R-cuadrado).'],
-          [curso1Id, 5, 'Módulo 5: Aplicaciones Reales: Predicción Financiera y de Ventas', 'Desarrollo de un caso de estudio real. Predicción de ingresos empresariales basados en inversión publicitaria.']
+          [curso1Id, 1, 'Explicación', 'Introducción teórica detallada al modelo matemático de regresión lineal.'],
+          [curso1Id, 2, 'Ejemplos', 'Casos prácticos de predicciones en la vida real.'],
+          [curso1Id, 3, 'Demo', 'Demostración práctica y en vivo del algoritmo funcionando.'],
+          [curso1Id, 4, 'Subir datos en CSV -> Regresión', 'Procesamiento e inyección de datasets CSV para entrenar el modelo de regresión.'],
+          [curso1Id, 5, 'Examen', 'Evaluación final de conocimientos adquiridos en Regresión Lineal.']
         ];
         for (const m of mods1) {
           await client.query('INSERT INTO modulos (curso_id, orden, titulo, descripcion) VALUES ($1, $2, $3, $4)', m);
@@ -202,11 +211,10 @@ async function initializeDatabase() {
 
       if (curso2Id) {
         const mods2 = [
-          [curso2Id, 1, 'Módulo 1: Fundamentos de IA y Computación Evolutiva', 'Orígenes históricos y comparación entre programación imperativa vs. búsqueda estocástica guiada.'],
-          [curso2Id, 2, 'Módulo 2: Representación de Cromosomas y Estructura de Poblaciones', 'Codificación binaria, entera y real de cromosomas. Generación inicial de la población de soluciones.'],
-          [curso2Id, 3, 'Módulo 3: Operadores Genéticos: Selección, Cruce y Mutación', 'Implementación paso a paso de cruzamiento en un punto, cruzamiento uniforme y mutación adaptativa. Selección de sobrevivientes.'],
-          [curso2Id, 4, 'Módulo 4: Algoritmos de Optimización de Rutas y Robótica en Python', 'Diseño de la función fitness para el problema del agente viajero (TSP). Simulación interactiva en consola y gráficos.'],
-          [curso2Id, 5, 'Módulo 5: Casos de Estudio Avanzados e Investigación Científica', 'Co-evolución, elitismo y sintonía de hiperparámetros evolutivos. Aplicaciones avanzadas en diseño de redes neuronales.']
+          [curso2Id, 1, 'Explicación', 'Conceptos fundamentales de cromosomas, poblaciones y funciones de fitness.'],
+          [curso2Id, 2, 'Ejemplos', 'Resolución evolutiva aplicada a problemas estocásticos y de ruteo.'],
+          [curso2Id, 3, 'Demo', 'Visualización en vivo de la mutación y convergencia del algoritmo genético.'],
+          [curso2Id, 4, 'Examen', 'Prueba técnica sobre operadores de mutación, cruce y selección natural.']
         ];
         for (const m of mods2) {
           await client.query('INSERT INTO modulos (curso_id, orden, titulo, descripcion) VALUES ($1, $2, $3, $4)', m);
@@ -214,7 +222,8 @@ async function initializeDatabase() {
       }
     }
 
-    // 4. Seed Mock Students
+    // 4. Seed Mock Students (Limpiar y sembrar con array de cursos)
+    await client.query('DELETE FROM usuarios');
     const usersCheck = await client.query('SELECT COUNT(*) FROM usuarios');
     if (parseInt(usersCheck.rows[0].count, 10) === 0) {
       console.log('Sembrando estudiantes de prueba...');
@@ -222,31 +231,31 @@ async function initializeDatabase() {
       const c1 = cursosRows.rows[0]?.id;
       const c2 = cursosRows.rows[1]?.id;
 
-      // Carlos (Accepted student)
+      // Carlos (Accepted student) - Inscrito en ambos cursos
       const carlosRes = await client.query(
-        `INSERT INTO usuarios (nombre, documento, correo, telefono, edad, pais, contrasena, curso_id, estado, usuario_acceso, contrasena_acceso)
+        `INSERT INTO usuarios (nombre, documento, correo, telefono, edad, pais, contrasena, cursos_ids, estado, usuario_acceso, contrasena_acceso)
          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id`,
-        ['Carlos Rodríguez', 'V-20456789', 'carlos.rod@gmail.com', '+584125556677', 24, 'Venezuela', hashPassword('carlos123'), c1, 'ACEPTADO', 'crodriguez_fit', 'FitSecure2026']
+        ['Carlos Rodríguez', 'V-20456789', 'carlos.rod@gmail.com', '+584125556677', 24, 'Venezuela', hashPassword('carlos123'), JSON.stringify([c1, c2]), 'ACEPTADO', 'crodriguez_fit', 'FitSecure2026']
       );
       const carlosId = carlosRes.rows[0].id;
 
       await client.query(
         'INSERT INTO notificaciones (usuario_id, titulo, mensaje, leida) VALUES ($1,$2,$3,$4)',
-        [carlosId, '¡Admisión Aprobada!', 'Felicidades Carlos, has sido aceptado en Infinity Tech University para el curso de Regresión Lineal. Tus credenciales oficiales de acceso son: Usuario: crodriguez_fit | Contraseña: FitSecure2026.', false]
+        [carlosId, '¡Admisión Aprobada!', 'Felicidades Carlos, has sido aceptado en Infinity Tech University para tus cursos seleccionados. Tus credenciales oficiales de acceso son: Usuario: crodriguez_fit | Contraseña: FitSecure2026.', false]
       );
 
-      // María (Pending student)
+      // María (Pending student) - Inscrita solo en Algoritmo Genético
       await client.query(
-        `INSERT INTO usuarios (nombre, documento, correo, telefono, edad, pais, contrasena, curso_id, estado)
+        `INSERT INTO usuarios (nombre, documento, correo, telefono, edad, pais, contrasena, cursos_ids, estado)
          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
-        ['María González', 'PE-10293847', 'maria.gonzalez.ai@gmail.com', '+51987654321', 26, 'Perú', hashPassword('maria123'), c2, 'PENDIENTE']
+        ['María González', 'PE-10293847', 'maria.gonzalez.ai@gmail.com', '+51987654321', 26, 'Perú', hashPassword('maria123'), JSON.stringify([c2]), 'PENDIENTE']
       );
 
-      // Ana (Pending student)
+      // Ana (Pending student) - Inscrita solo en Regresión Lineal
       await client.query(
-        `INSERT INTO usuarios (nombre, documento, correo, telefono, edad, pais, contrasena, curso_id, estado)
+        `INSERT INTO usuarios (nombre, documento, correo, telefono, edad, pais, contrasena, cursos_ids, estado)
          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
-        ['Ana Silva', 'AR-99384726', 'ana.silva.data@gmail.com', '+549113847291', 28, 'Argentina', hashPassword('ana123'), c1, 'PENDIENTE']
+        ['Ana Silva', 'AR-99384726', 'ana.silva.data@gmail.com', '+549113847291', 28, 'Argentina', hashPassword('ana123'), JSON.stringify([c1]), 'PENDIENTE']
       );
     }
 
