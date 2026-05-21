@@ -1,6 +1,6 @@
 # 🌌 Infinity Tech University
 
-![Infinity Tech Banner](https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80)
+
 
 Una plataforma universitaria moderna, completa y profesional (Full-Stack), enfocada en cursos tecnológicos de Inteligencia Artificial y Ciencia de Datos. Desarrollada con un diseño premium futurista (Glassmorphism), backend robusto y base de datos relacional en la nube.
 
